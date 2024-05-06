@@ -1,8 +1,9 @@
 /*
 Type text to the console with delay mimicing a typewriter.
  */
+pub mod dialogue;
 
- use std:: { 
+use std:: { 
     // To print one char at a time and wait for user input
     io::{self, Write},
 
@@ -13,56 +14,10 @@ Type text to the console with delay mimicing a typewriter.
 // For printing delay 
 use rand::Rng; 
 
-/*
-TODO: annie - maybe put this in its own file inside the typewrite mod?
-- But commit before doing that ..
-- add colors, for ful dialogue or by line
- */
-
-pub type Dialogue = Vec<DialogueLine>;
-pub struct DialogueLine {
-
-    /// The text to print out to the console.
-    text: String,
-
-    /// `true` is the player must press enter to continue the dialogue at the end of this line.
-    requires_confirmation: bool,
-
-    /// Add Extra delay at the end of this line when printing it as part of a multiline dialogue.
-    eol_delay: Option<u64>
-}
-
-impl DialogueLine {
-    
-    pub fn standard(text: &str) -> DialogueLine {
-        DialogueLine {
-            text: String::from(text),
-            requires_confirmation: false,
-            eol_delay: None
-        }
-    }
-
-    pub fn with_delay(text: &str, eol_delay: u64) -> DialogueLine {
-        DialogueLine { 
-            text: String::from(text), 
-            requires_confirmation: false, 
-            eol_delay: Some(eol_delay)
-        }
-    }
-
-    pub fn with_confirmation(text: &str) -> DialogueLine {
-        DialogueLine { 
-            text: String::from(text), 
-            requires_confirmation: true, 
-            eol_delay: None 
-        }
-    }
-}
-
 /// Print a full dialogue to the console in a typewriter-ish manner.
 /// 
 /// * `dialogue` A vector or dialogue lines
-pub fn print_dialogue(dialogue: Dialogue) {
+pub fn print_dialogue(dialogue: dialogue::Lines) {
 
     for line in dialogue {
         print(&line.text);
