@@ -1,7 +1,9 @@
 /*
 Type text to the console with delay mimicing a typewriter.
  */
+
 pub mod dialogue;
+use dialogue::LineColor;
 
 use std:: { 
     // To print one char at a time and wait for user input
@@ -12,7 +14,7 @@ use std:: {
 };
 
 // For printing delay 
-use rand::Rng; 
+use rand::Rng;
 
 /// Print a full dialogue to the console in a typewriter-ish manner.
 /// 
@@ -20,7 +22,7 @@ use rand::Rng;
 pub fn print_dialogue(dialogue: dialogue::Lines) {
 
     for line in dialogue {
-        print(&line.text);
+        print(&line.text, &line.color);
 
         if let Some(delay) = line.eol_delay {
             wait(delay);    
@@ -42,16 +44,27 @@ pub fn print_dialogue(dialogue: dialogue::Lines) {
 /// Print text to the console in a typewrite-ish manner
 /// 
 /// * `text` - The text to print to the console
-fn print(text: &str) {
+/// * `color` - Optional color to apply to the text being printed
+fn print(text: &str, color: &Option<LineColor>) {
 
     let char_list: Vec<char> = text.chars().collect();
 
+    if let Some(line_color) = color {
+        let code = line_color.color_code();
+        print!("{code}");
+    }
+
     for char in char_list {
         random_wait(30, 100);
-        
+
         print!("{}", char);
         
         let _ = io::stdout().flush();
+    }
+
+    if color.is_some() {
+        let stop = LineColor::reset_code();
+        print!("{stop}");
     }
 
     print!("\n");
