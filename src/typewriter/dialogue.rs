@@ -69,17 +69,14 @@ impl Line {
         }
     }
 }
-#[derive(Debug)]
-#[derive(PartialEq)]
-#[derive(Copy, Clone)]
+#[derive(Debug, PartialEq, Copy, Clone)]
 enum TextColor {
     Blue,
     Green,
     Red
 }
-#[derive(Debug)]
-#[derive(PartialEq)]
-#[derive(Copy, Clone)]
+
+#[derive(Debug, PartialEq, Copy, Clone)]
 pub struct LineColor {
     color: TextColor
 }
@@ -125,7 +122,7 @@ mod tests {
         let line_color = LineColor::blue();
         let colored_line = Line::colored("text", line_color);
 
-        assert_eq!(colored_line.color.unwrap(), line_color);
+        assert_eq!(colored_line.color.expect("value"), line_color);
         assert_eq!(colored_line.text, "text");
         assert_eq!(colored_line.eol_delay, None);
         assert_eq!(colored_line.requires_confirmation, false);
@@ -153,7 +150,7 @@ mod tests {
 
         assert_eq!(delayed_line.color, None);
         assert_eq!(delayed_line.text, test_text);
-        assert_eq!(delayed_line.eol_delay.unwrap(), 1);
+        assert_eq!(delayed_line.eol_delay.expect("value"), 1);
         assert_eq!(delayed_line.requires_confirmation, false);
     }
 
@@ -184,9 +181,10 @@ mod tests {
         let configed_line = Line::configured(test_text, config);
 
         assert_eq!(configed_line.text, test_text);
-        assert_eq!(configed_line.color.unwrap(), config.color.unwrap());
-        assert_eq!(configed_line.eol_delay.unwrap(), config.eol_delay.unwrap());
-        assert!(configed_line.requires_confirmation)
+        assert_eq!(configed_line.color.expect("value"), config.color.expect("value"));
+        assert_eq!(configed_line.eol_delay.expect("value"), config.eol_delay.expect("value"));
+        assert!(configed_line.requires_confirmation);
+
     }
 
     #[test]
