@@ -16,6 +16,9 @@ use std:: {
 // For printing delay 
 use rand::Rng;
 
+// TODO: annie - add color for full dialogue.
+// - experiment with putting the typewriter.rs file inside the typewriter folder .. 
+
 /// Print a full dialogue to the console in a typewriter-ish manner.
 /// 
 /// * `dialogue` A vector or dialogue lines

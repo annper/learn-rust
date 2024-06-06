@@ -53,11 +53,17 @@ impl Line {
         }
     }
 }
+#[derive(Debug)]
+#[derive(PartialEq)]
+#[derive(Copy, Clone)]
 enum TextColor {
     Blue,
     Green,
     Red
 }
+#[derive(Debug)]
+#[derive(PartialEq)]
+#[derive(Copy, Clone)]
 pub struct LineColor {
     color: TextColor
 }
@@ -88,5 +94,70 @@ impl LineColor {
 
     pub(super) fn reset_code() -> &'static str {
         "\x1B[39m"
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::typewriter::dialogue::TextColor;
+
+    use super::{Line, LineColor};
+
+    #[test]
+    fn colored_line_is_configured_correctly() {
+        
+        let line_color = LineColor::blue();
+        let colored_line = Line::colored("text", line_color);
+
+        assert_eq!(colored_line.color.unwrap(), line_color);
+        assert_eq!(colored_line.text, "text");
+        assert_eq!(colored_line.eol_delay, None);
+        assert_eq!(colored_line.requires_confirmation, false);
+    }
+
+    #[test]
+    fn standard_line_is_configured_correctly() {
+
+        let test_text = "hello";
+
+        let standard_line = Line::standard(test_text);
+
+        assert_eq!(standard_line.color, None);
+        assert_eq!(standard_line.text, test_text);
+        assert_eq!(standard_line.eol_delay, None);
+        assert_eq!(standard_line.requires_confirmation, false);
+    }
+
+    #[test]
+    fn line_with_delay_is_configured_correctly() {
+
+        let test_text = "hello";
+
+        let delayed_line = Line::with_delay(test_text, 1);
+
+        assert_eq!(delayed_line.color, None);
+        assert_eq!(delayed_line.text, test_text);
+        assert_eq!(delayed_line.eol_delay.unwrap(), 1);
+        assert_eq!(delayed_line.requires_confirmation, false);
+    }
+
+    #[test]
+    fn line_with_confirmation_is_configured_correctly() {
+
+        let test_text = "hello";
+
+        let confirm_line = Line::with_confirmation(test_text);
+
+        assert_eq!(confirm_line.color, None);
+        assert_eq!(confirm_line.text, test_text);
+        assert_eq!(confirm_line.eol_delay, None);
+        assert!(confirm_line.requires_confirmation);
+    }
+
+    #[test]
+    fn line_color_maps_to_correct_text_color() {
+        assert_eq!(LineColor::blue().color, TextColor::Blue);
+        assert_eq!(LineColor::green().color, TextColor::Green);
+        assert_eq!(LineColor::red().color, TextColor::Red);
     }
 }
