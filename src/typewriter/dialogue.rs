@@ -15,7 +15,23 @@ pub struct Line {
     pub(super) color: Option<LineColor>
 }
 
+#[derive(Copy, Clone)]
+pub struct LineConfig {
+    pub requires_confirmation: bool,
+    pub eol_delay: Option<u64>,
+    pub color: Option<LineColor>
+}
+
 impl Line {
+
+    pub fn configured(text: &str, config: LineConfig) -> Line {
+        Line { 
+            text: String::from(text), 
+            requires_confirmation: config.requires_confirmation, 
+            eol_delay: config.eol_delay, 
+            color: config.color 
+        }
+    }
 
     pub fn colored(text: &str, color: LineColor) -> Line {
         Line {
@@ -101,7 +117,7 @@ impl LineColor {
 mod tests {
     use crate::typewriter::dialogue::TextColor;
 
-    use super::{Line, LineColor};
+    use super::{Line, LineColor, LineConfig};
 
     #[test]
     fn colored_line_is_configured_correctly() {
@@ -152,6 +168,25 @@ mod tests {
         assert_eq!(confirm_line.text, test_text);
         assert_eq!(confirm_line.eol_delay, None);
         assert!(confirm_line.requires_confirmation);
+    }
+
+    #[test]
+    fn configured_line_retains_configuration() {
+
+        let test_text = "hello";
+
+        let config = LineConfig {
+            requires_confirmation: true,
+            eol_delay: Some(1000),
+            color: Some(LineColor::blue())
+        };
+
+        let configed_line = Line::configured(test_text, config);
+
+        assert_eq!(configed_line.text, test_text);
+        assert_eq!(configed_line.color.unwrap(), config.color.unwrap());
+        assert_eq!(configed_line.eol_delay.unwrap(), config.eol_delay.unwrap());
+        assert!(configed_line.requires_confirmation)
     }
 
     #[test]

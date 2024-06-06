@@ -16,8 +16,17 @@ use std:: {
 // For printing delay 
 use rand::Rng;
 
-// TODO: annie - add color for full dialogue.
-// - experiment with putting the typewriter.rs file inside the typewriter folder .. 
+use self::dialogue::Line;
+
+/// Print every line with the same configuration
+pub fn print_dialogue_lines(text_lines: Vec<&str>, config: dialogue::LineConfig) {
+
+    for text in text_lines {
+        print_line(Line::configured(text, config));
+    }
+}
+
+// TODO: - experiment with putting the typewriter.rs file inside the typewriter folder .. 
 
 /// Print a full dialogue to the console in a typewriter-ish manner.
 /// 
@@ -25,22 +34,27 @@ use rand::Rng;
 pub fn print_dialogue(dialogue: dialogue::Lines) {
 
     for line in dialogue {
-        print(&line.text, &line.color);
+        print_line(line);
+    }
+}
 
-        if let Some(delay) = line.eol_delay {
-            wait(delay);    
-        }
+fn print_line(line: dialogue::Line) {
+    
+    print(&line.text, &line.color);
 
-        if line.requires_confirmation {
-            
-            print!("> ");
-            let _ = io::stdout().flush(); // This line ensures that previous print appears
+    if let Some(delay) = line.eol_delay {
+        wait(delay);    
+    }
 
-            let mut input = String::new();
-            io::stdin()
-                .read_line(&mut input)
-                .expect("Something went wrong");
-        }
+    if line.requires_confirmation {
+        
+        print!("> ");
+        let _ = io::stdout().flush(); // This line ensures that previous print appears
+
+        let mut input = String::new();
+        io::stdin()
+            .read_line(&mut input)
+            .expect("Something went wrong");
     }
 }
 
